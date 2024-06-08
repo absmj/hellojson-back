@@ -1,5 +1,6 @@
 export default class BaseResponse {
-    constructor(status = 'success', message = '', data = null) {
+    ms;
+    constructor(status = 200, message = 'Successfull', data = null) {
         this.status = status;
         this.message = message;
         this.data = data;
@@ -36,12 +37,12 @@ export default class BaseResponse {
         return JSON.stringify({
             status: this.status,
             message: this.message,
+            timestamp: Date.now(),
             data: this.data
         });
     }
 
     send(res) {
-        res.setHeader('Content-Type', 'application/json');
         res.end(this.toJson());
     }
 

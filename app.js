@@ -36,7 +36,7 @@ app.use((err, req, res, next) => handleException(err, req, res, next));
 app.all('/', async (req, res, next) => {
     try {
         const uid = req.query.uid;
-        const updated = req.query.updated;  // assuming this might be used elsewhere
+        const baseResponse = Boolean(Number(req.query.br)) || false; 
 
         if (!uid) {
             throw new Error("UUID is empty");
@@ -84,9 +84,13 @@ app.all('/', async (req, res, next) => {
             });
             response.setStatus(200);
         } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.end(data.data);
-            return;
+            if(baseResponse) {
+                response.setData(JSON.parse(data.data))
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(data.data);
+                return;
+            }
         }
         response.send(res);
     } catch (err) {
@@ -102,7 +106,7 @@ app.use((req, res, next) => {
 
 app.use(handleException);
 
-const port = 21098;
+const port = 3000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
